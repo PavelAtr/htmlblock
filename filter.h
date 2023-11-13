@@ -1,10 +1,5 @@
 #include <stdio.h>
 
-struct word
-{
-    char* string;
-    int weight;
-};
+#define MAXWORDLENGTH 8192
 
-int initfilter(FILE* list, int count);
-int filter(char* buffer, ssize_t length);
+int filter(FILE* list, char* buffer, ssize_t length);

@@ -16,7 +16,6 @@ int main(int argc, char** argv)
 
     FILE *list = fopen(argv[1], "r");
     if (list == NULL) error(2, errno, "Error open list %s\n", argv[1]);
-    initfilter(list, maxlist);
 
     int pid;
     int cmdpipe[2];
@@ -36,7 +35,7 @@ int main(int argc, char** argv)
     char* document = (char*) malloc(maxsize);
     ssize_t size = read(0, document, maxsize);
 
-    int weight = filter(document, size);
+    int weight = filter(list, document, size);
     printf("%d\n", weight);
     if (weight >= maxweight)
         exit(1);

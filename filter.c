@@ -7,29 +7,7 @@
 #include "env.h"
 #include <string.h>
 
-struct word *words;
-int wordnum = 0;
-
-int initfilter(FILE* list, int count)
-{
-    char string[1024];
-    int weight;
-    words = (struct word*) malloc(count * sizeof(struct word));
-    while(fscanf(list, "%s :: %d", string, &weight) != EOF)
-    {
-        words[wordnum].string = strdup(string);
-        words[wordnum].weight = weight;
-        wordnum++;
-        if (wordnum == maxlist) break;
-    }
-
-    if (debug)
-        for (int i = 0; i < wordnum; i++) printf("%s::%d\n", words[i].string, words[i].weight);
-
-    return 0;
-}
-
-int filter(char* buffer, ssize_t length)
+int filter(FILE* list, char* buffer, ssize_t length)
 {
     int weight = 0;
 
@@ -40,18 +18,20 @@ int filter(char* buffer, ssize_t length)
         write(1, "\n", 1);
     }
 
-    for (int i = 0; i < wordnum; i++)
+    char string[MAXWORDLENGTH];
+    int strweight;
+    while(fscanf(list, "%s :: %d", string, &strweight) != EOF)
     {
         char *found = buffer;
-        while ((found = strstr(found, words[i].string)) != NULL)
+        while ((found = strstr(found, string)) != NULL)
         {
             if (buffer - found < length)
                 found = found + 1;
 
             if (debug)
-                printf("%s::%d matched\n", words[i].string, words[i].weight);
+                printf("%s::%d matched\n", string, strweight);
 
-            weight += words[i].weight;
+            weight += strweight;
         }
     }
 
